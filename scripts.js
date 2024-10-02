@@ -19,8 +19,11 @@ async function getProducts() {
 
             //estructura del producto en el div
             productDiv.innerHTML = `
-            <img src="${product.image}">
             <h2>${product.title}</h2>
+            <p>${product.description}</p>
+            <img src="${product.image}">
+            <p>Price: ${product.price}</p>
+            <p>Rating: ${product.rating.rate} (based on ${product.rating.count} reviews)</p>
             `
             //añadimos el producto al DOM
             productosContainer.appendChild(productDiv);
