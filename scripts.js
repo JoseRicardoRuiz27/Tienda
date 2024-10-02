@@ -1,33 +1,111 @@
 const urlApi = `https://fakestoreapi.com/products`;
 
-async function getProducts() {
-    try {
+    async function getProducts() {
+      try {
         // Obtener los productos de la API
         const response = await fetch(urlApi);
         const products = await response.json();
 
-        //contenedor para productos destacados
+        // Contenedores para productos destacados y categorías
         const featuredContainer = document.getElementById('featuredContainer');
-        const mainContainer = document.getElementById('productosContainer');
+        const mainContainer = document.getElementById('mainContainer');
+
         featuredContainer.innerHTML = '';
         mainContainer.innerHTML = '';
 
-        //filtrar productos destacados
+        // Filtrar productos con rating superior a 4.0
         const featuredProducts = products.filter(product => product.rating.rate > 4.0);
 
-        //crear contenedor para productos destacados
-        if(featuredProducts.length > 0) {
-            const featuredTitle = document.createElement('h2');
-            featuredTitle.classList.add('category-title');
-            featuredTitle.textContent = 'Productos destacados';
-            featuredContainer.appendChild(featuredTitle);
+        // Crear contenedor para productos destacados (ruleta de imágenes)
+        if (featuredProducts.length > 0) {
+          const featuredTitle = document.createElement('h2');
+          featuredTitle.classList.add('featured-title');
+          featuredTitle.textContent = "Productos Destacados";
+          featuredContainer.appendChild(featuredTitle);
 
+          // Crear la estructura del carrusel
+          const carouselContainer = document.createElement('div');
+          carouselContainer.classList.add('carousel-container');
 
-          const featuredProductsContainer = document.createElement('div');
-          featuredProductsContainer.classList.add('products-container');
+          const carouselTrack = document.createElement('div');
+          carouselTrack.classList.add('carousel-track');
 
-          // Mostrar productos destacados
+          // Añadir productos al carrusel
           featuredProducts.forEach(product => {
+            const productDiv = document.createElement('div');
+            productDiv.classList.add('carousel-item');
+
+            productDiv.innerHTML = `
+              <h2>${product.title}</h2>
+              <img src="${product.image}" alt="${product.title}">
+              <p>Price: $${product.price}</p>
+              <p>Rating: ${product.rating.rate} (${product.rating.count} reviews)</p>
+            `;
+
+            carouselTrack.appendChild(productDiv);
+          });
+
+          // Añadir el track y los botones al carrusel
+          carouselContainer.appendChild(carouselTrack);
+
+          // Botón para ir hacia atrás
+          const prevButton = document.createElement('button');
+          prevButton.classList.add('carousel-button', 'prev-button');
+          prevButton.textContent = '❮';
+          carouselContainer.appendChild(prevButton);
+
+          // Botón para ir hacia adelante
+          const nextButton = document.createElement('button');
+          nextButton.classList.add('carousel-button', 'next-button');
+          nextButton.textContent = '❯';
+          carouselContainer.appendChild(nextButton);
+
+          // Agregar el carrusel al contenedor de productos destacados
+          featuredContainer.appendChild(carouselContainer);
+
+          // Lógica del carrusel
+          let currentIndex = 0;
+          const itemWidth = 200 + 32; // Ancho del producto + margen
+          const totalItems = featuredProducts.length;
+
+          prevButton.addEventListener('click', () => {
+            if (currentIndex > 0) {
+              currentIndex--;
+              carouselTrack.style.transform = `translateX(-${itemWidth * currentIndex}px)`;
+            }
+          });
+
+          nextButton.addEventListener('click', () => {
+            if (currentIndex < totalItems - 1) {
+              currentIndex++;
+              carouselTrack.style.transform = `translateX(-${itemWidth * currentIndex}px)`;
+            }
+          });
+        }
+
+        // Separar los productos por categorías
+        const categories = Array.from(new Set(products.map(product => product.category)));
+
+        // Iterar sobre cada categoría
+        categories.forEach(category => {
+          const categoryDiv = document.createElement('div');
+          categoryDiv.classList.add('category');
+
+          // Crear el título de la categoría
+          const categoryTitle = document.createElement('h2');
+          categoryTitle.classList.add('category-title');
+          categoryTitle.textContent = category;
+          categoryDiv.appendChild(categoryTitle);
+
+          // Crear el contenedor de los productos
+          const productsContainer = document.createElement('div');
+          productsContainer.classList.add('products-container');
+
+          // Filtrar los productos por la categoría actual
+          const filteredProducts = products.filter(product => product.category === category);
+
+          // Mostrar los productos dentro del contenedor
+          filteredProducts.forEach(product => {
             const productDiv = document.createElement('div');
             productDiv.classList.add('producto');
 
@@ -37,58 +115,20 @@ async function getProducts() {
               <p>Price: $${product.price}</p>
               <p>Rating: ${product.rating.rate} (${product.rating.count} reviews)</p>
             `;
-            featuredProductsContainer.appendChild(productDiv);
-            });
-            // Agregar contenedor de productos destacados
-            featuredContainer.appendChild(featuredProductsContainer);
-        }
 
-        // Filtrar productos por categoría
-        const menClothing = products.filter(product => product.category === "men's clothing");
-        const womenClothing = products.filter(product => product.category === "women's clothing");
-        const jewelery = products.filter(product => product.category === "jewelery");
-        const electronics = products.filter(product => product.category === "electronics");
+            productsContainer.appendChild(productDiv);
+          });
 
-        // Mostrar productos filtrados
-        displayProductsByCategory(menClothing, 'Men\'s Clothing');
-        displayProductsByCategory(womenClothing, 'Women\'s Clothing');
-        displayProductsByCategory(jewelery, 'Jewelery');
-        displayProductsByCategory(electronics, 'Electronics');
-        
-    } catch (error) {
+          // Agregar el contenedor de productos a la categoría
+          categoryDiv.appendChild(productsContainer);
+
+          // Agregar la categoría completa al contenedor principal
+          mainContainer.appendChild(categoryDiv);
+        });
+      } catch (error) {
         console.log(error);
+      }
     }
-}
 
-// Función para mostrar productos de cada categoría en el DOM
-function displayProductsByCategory(products, category) {
-    // Tomamos el elemento del DOM con id productosContainer
-    const productosContainer = document.getElementById('productosContainer');
-
-    // Creamos un contenedor para la categoría
-    const categoryDiv = document.createElement('div');
-    categoryDiv.innerHTML = `<h2>${category}</h2>`;
-    
-    // Recorremos los productos y los mostramos en el DOM
-    products.forEach(product => {
-        const productDiv = document.createElement('div'); // Creamos un nuevo elemento div
-        productDiv.classList.add('producto'); // Agregamos la clase producto al elemento
-
-        // Estructura del producto en el div
-        productDiv.innerHTML = `
-            <h3>${product.title}</h3>
-            <p>${product.description}</p>
-            <img src="${product.image}" alt="${product.title}" style="width: 150px; height: 150px;">
-            <p>Price: $${product.price}</p>
-            <p>Rating: ${product.rating.rate} (based on ${product.rating.count} reviews)</p>
-        `;
-        // Añadimos el producto al contenedor de la categoría
-        categoryDiv.appendChild(productDiv);
-    });
-
-    // Añadimos el contenedor de la categoría al DOM
-    productosContainer.appendChild(categoryDiv);
-}
-
-// Cargamos los productos cuando abrimos la página
-window.onload = getProducts;
+    // Cargar productos cuando la página se cargue
+    window.onload = getProducts;
