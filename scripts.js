@@ -1,11 +1,47 @@
 const urlApi = `https://fakestoreapi.com/products`;
 
 async function getProducts() {
-
     try {
         // Obtener los productos de la API
         const response = await fetch(urlApi);
         const products = await response.json();
+
+        //contenedor para productos destacados
+        const featuredContainer = document.getElementById('featuredContainer');
+        const mainContainer = document.getElementById('productosContainer');
+        featuredContainer.innerHTML = '';
+        mainContainer.innerHTML = '';
+
+        //filtrar productos destacados
+        const featuredProducts = products.filter(product => product.rating.rate > 4.0);
+
+        //crear contenedor para productos destacados
+        if(featuredProducts.length > 0) {
+            const featuredTitle = document.createElement('h2');
+            featuredTitle.classList.add('category-title');
+            featuredTitle.textContent = 'Productos destacados';
+            featuredContainer.appendChild(featuredTitle);
+
+
+          const featuredProductsContainer = document.createElement('div');
+          featuredProductsContainer.classList.add('products-container');
+
+          // Mostrar productos destacados
+          featuredProducts.forEach(product => {
+            const productDiv = document.createElement('div');
+            productDiv.classList.add('producto');
+
+            productDiv.innerHTML = `
+              <h2>${product.title}</h2>
+              <img src="${product.image}" alt="${product.title}">
+              <p>Price: $${product.price}</p>
+              <p>Rating: ${product.rating.rate} (${product.rating.count} reviews)</p>
+            `;
+            featuredProductsContainer.appendChild(productDiv);
+            });
+            // Agregar contenedor de productos destacados
+            featuredContainer.appendChild(featuredProductsContainer);
+        }
 
         // Filtrar productos por categoría
         const menClothing = products.filter(product => product.category === "men's clothing");
