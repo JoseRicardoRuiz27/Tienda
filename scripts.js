@@ -19,8 +19,6 @@ const urlApi = `https://fakestoreapi.com/products`;
         // Crear contenedor para productos destacados (ruleta de imágenes)
         if (featuredProducts.length > 0) {
           const featuredTitle = document.createElement('h2');
-          featuredTitle.classList.add('featured-title');
-          featuredTitle.textContent = "Productos Destacados";
           featuredContainer.appendChild(featuredTitle);
 
           // Crear la estructura del carrusel
@@ -40,6 +38,7 @@ const urlApi = `https://fakestoreapi.com/products`;
               <img src="${product.image}" alt="${product.title}">
               <p>Price: $${product.price}</p>
               <p>Rating: ${product.rating.rate} (${product.rating.count} reviews)</p>
+              <button class="btn btn-primary">Agregar al carrito</button>
             `;
 
             carouselTrack.appendChild(productDiv);
@@ -114,6 +113,7 @@ const urlApi = `https://fakestoreapi.com/products`;
               <img src="${product.image}" alt="${product.title}">
               <p>Price: $${product.price}</p>
               <p>Rating: ${product.rating.rate} (${product.rating.count} reviews)</p>
+              <button class="btn btn-primary">Agregar al carrito</button>
             `;
 
             productsContainer.appendChild(productDiv);

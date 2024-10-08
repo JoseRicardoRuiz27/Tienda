@@ -1,17 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./styles.css">
     <title>Tienda</title>
 </head>
-<body>  <!-- Contenedor para productos destacados -->
+<body>  
+    <header>
+        <h1>Tienda LocalStorage</h1>
+        <img src="./icono/shopping-cart_6012938.png" alt="">
+    </header>
+    <main style="background: rgb(237, 222, 222);">
+    <!-- Contenedor para productos destacados -->
+     <h2 class="prod_destacado">Productos destacados</h2>
     <div id="featuredContainer"></div>
   
     <!-- Contenedor principal donde se mostrarán las categorías y productos -->
     <div id="mainContainer"></div>
-  
+    </main>
     <script type="module" src="./scripts.js"></script>
 </body>
 </html>
